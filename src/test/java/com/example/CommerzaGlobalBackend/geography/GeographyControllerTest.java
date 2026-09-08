@@ -20,7 +20,9 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -102,6 +104,48 @@ class GeographyControllerTest {
                 .andExpect(jsonPath("$.data.serviceablePincodes").value(1));
     }
 
+
+    @Test
+    void adminCanViewUpdateAndSoftDeleteState() throws Exception {
+        GeoState state = saveHierarchy(true, true).state();
+
+        mockMvc.perform(get("/api/admin/geography/states/{id}", state.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.name").value("Kerala"))
+                .andExpect(jsonPath("$.data.active").value(true));
+
+        mockMvc.perform(put("/api/admin/geography/states/{id}", state.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "name": "Kerala Updated",
+                                  "code": "KLU",
+                                  "active": true
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.name").value("Kerala Updated"))
+                .andExpect(jsonPath("$.data.code").value("KLU"));
+
+        mockMvc.perform(delete("/api/admin/geography/states/{id}", state.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.active").value(false));
+    }
+
+    @Test
+    void adminCanViewAndSoftDeletePincodeById() throws Exception {
+        GeoPincode pincode = saveHierarchy(true, true).pincode();
+
+        mockMvc.perform(get("/api/admin/geography/pincodes/id/{id}", pincode.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.pincode").value("695121"))
+                .andExpect(jsonPath("$.data.active").value(true));
+
+        mockMvc.perform(delete("/api/admin/geography/pincodes/{id}", pincode.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.active").value(false));
+    }
+
     @Test
     void creatingPincodeRejectsInvalidIndianPincode() throws Exception {
         GeoTown town = saveHierarchy(true, true).town();
@@ -159,10 +203,11 @@ class GeographyControllerTest {
                 .active(true)
                 .build());
 
-        return new SavedHierarchy(town, pincode);
+        return new SavedHierarchy(state, town, pincode);
     }
 
-    private record SavedHierarchy(GeoTown town, GeoPincode pincode) {
+    private record SavedHierarchy(GeoState state, GeoTown town, GeoPincode pincode) {
     }
 }
+
 

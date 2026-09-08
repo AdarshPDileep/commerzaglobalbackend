@@ -16,6 +16,7 @@ import com.example.CommerzaGlobalBackend.geography.dto.TalukRequest;
 import com.example.CommerzaGlobalBackend.geography.dto.TownRequest;
 import com.example.CommerzaGlobalBackend.geography.dto.ZoneRequest;
 import com.example.CommerzaGlobalBackend.geography.service.GeographyService;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,6 +49,16 @@ public class AdminGeographyController {
         return ApiResponse.success(geographyService.getStates());
     }
 
+    @GetMapping("/states/{id}")
+    public ApiResponse<GeographyItemResponse> state(@PathVariable Long id) {
+        return ApiResponse.success(geographyService.getState(id));
+    }
+
+    @DeleteMapping("/states/{id}")
+    public ApiResponse<GeographyItemResponse> deleteState(@PathVariable Long id) {
+        return ApiResponse.success(geographyService.deleteState(id));
+    }
+
     @PostMapping("/states")
     public ApiResponse<GeographyItemResponse> createState(@RequestBody StateRequest request) {
         return ApiResponse.success(geographyService.createState(request));
@@ -61,6 +72,16 @@ public class AdminGeographyController {
     @GetMapping("/states/{stateId}/zones")
     public ApiResponse<List<GeographyItemResponse>> zones(@PathVariable Long stateId) {
         return ApiResponse.success(geographyService.getZonesByState(stateId));
+    }
+
+    @GetMapping("/zones/{id}")
+    public ApiResponse<GeographyItemResponse> zone(@PathVariable Long id) {
+        return ApiResponse.success(geographyService.getZone(id));
+    }
+
+    @DeleteMapping("/zones/{id}")
+    public ApiResponse<GeographyItemResponse> deleteZone(@PathVariable Long id) {
+        return ApiResponse.success(geographyService.deleteZone(id));
     }
 
     @PostMapping("/zones")
@@ -78,6 +99,16 @@ public class AdminGeographyController {
         return ApiResponse.success(geographyService.getDistrictsByZone(zoneId));
     }
 
+    @GetMapping("/districts/{id}")
+    public ApiResponse<GeographyItemResponse> district(@PathVariable Long id) {
+        return ApiResponse.success(geographyService.getDistrict(id));
+    }
+
+    @DeleteMapping("/districts/{id}")
+    public ApiResponse<GeographyItemResponse> deleteDistrict(@PathVariable Long id) {
+        return ApiResponse.success(geographyService.deleteDistrict(id));
+    }
+
     @PostMapping("/districts")
     public ApiResponse<GeographyItemResponse> createDistrict(@RequestBody DistrictRequest request) {
         return ApiResponse.success(geographyService.createDistrict(request));
@@ -91,6 +122,16 @@ public class AdminGeographyController {
     @GetMapping("/districts/{districtId}/taluks")
     public ApiResponse<List<GeographyItemResponse>> taluks(@PathVariable Long districtId) {
         return ApiResponse.success(geographyService.getTaluksByDistrict(districtId));
+    }
+
+    @GetMapping("/taluks/{id}")
+    public ApiResponse<GeographyItemResponse> taluk(@PathVariable Long id) {
+        return ApiResponse.success(geographyService.getTaluk(id));
+    }
+
+    @DeleteMapping("/taluks/{id}")
+    public ApiResponse<GeographyItemResponse> deleteTaluk(@PathVariable Long id) {
+        return ApiResponse.success(geographyService.deleteTaluk(id));
     }
 
     @PostMapping("/taluks")
@@ -108,6 +149,16 @@ public class AdminGeographyController {
         return ApiResponse.success(geographyService.getTownsByTaluk(talukId));
     }
 
+    @GetMapping("/towns/{id}")
+    public ApiResponse<GeographyItemResponse> town(@PathVariable Long id) {
+        return ApiResponse.success(geographyService.getTown(id));
+    }
+
+    @DeleteMapping("/towns/{id}")
+    public ApiResponse<GeographyItemResponse> deleteTown(@PathVariable Long id) {
+        return ApiResponse.success(geographyService.deleteTown(id));
+    }
+
     @PostMapping("/towns")
     public ApiResponse<GeographyItemResponse> createTown(@RequestBody TownRequest request) {
         return ApiResponse.success(geographyService.createTown(request));
@@ -123,6 +174,16 @@ public class AdminGeographyController {
                                                                        @RequestParam(defaultValue = "0") int page,
                                                                        @RequestParam(defaultValue = "20") int size) {
         return ApiResponse.success(geographyService.getPincodesByTown(townId, page, size));
+    }
+
+    @GetMapping("/pincodes/id/{id}")
+    public ApiResponse<PincodeDetailsResponse> pincodeById(@PathVariable Long id) {
+        return ApiResponse.success(geographyService.getPincodeById(id));
+    }
+
+    @DeleteMapping("/pincodes/{id}")
+    public ApiResponse<PincodeDetailsResponse> deletePincode(@PathVariable Long id) {
+        return ApiResponse.success(geographyService.deletePincode(id));
     }
 
     @PostMapping("/pincodes")
@@ -150,3 +211,4 @@ public class AdminGeographyController {
         return ApiResponse.success(geographyService.search(query));
     }
 }
+

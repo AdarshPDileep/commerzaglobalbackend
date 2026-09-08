@@ -38,7 +38,7 @@ public class SecurityConfig {
                 "http://localhost:5174",
                 "http://127.0.0.1:5174"
         ));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Content-Type", "Authorization"));
         configuration.setMaxAge(3600L);
 
@@ -47,3 +47,4 @@ public class SecurityConfig {
         return source;
     }
 }
+

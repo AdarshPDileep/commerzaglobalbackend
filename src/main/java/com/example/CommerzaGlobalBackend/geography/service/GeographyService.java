@@ -81,6 +81,73 @@ public class GeographyService {
         return stateRepository.findAll().stream().map(this::toStateResponse).toList();
     }
 
+
+    @Transactional(readOnly = true)
+    public GeographyItemResponse getState(Long id) {
+        return toItem(findState(id));
+    }
+
+    @Transactional(readOnly = true)
+    public GeographyItemResponse getZone(Long id) {
+        return toItem(findZone(id));
+    }
+
+    @Transactional(readOnly = true)
+    public GeographyItemResponse getDistrict(Long id) {
+        return toItem(findDistrict(id));
+    }
+
+    @Transactional(readOnly = true)
+    public GeographyItemResponse getTaluk(Long id) {
+        return toItem(findTaluk(id));
+    }
+
+    @Transactional(readOnly = true)
+    public GeographyItemResponse getTown(Long id) {
+        return toItem(findTown(id));
+    }
+
+    @Transactional(readOnly = true)
+    public PincodeDetailsResponse getPincodeById(Long id) {
+        return toPincodeDetails(findPincode(id));
+    }
+
+    public GeographyItemResponse deleteState(Long id) {
+        GeoState state = findState(id);
+        state.setActive(false);
+        return toItem(state);
+    }
+
+    public GeographyItemResponse deleteZone(Long id) {
+        GeoZone zone = findZone(id);
+        zone.setActive(false);
+        return toItem(zone);
+    }
+
+    public GeographyItemResponse deleteDistrict(Long id) {
+        GeoDistrict district = findDistrict(id);
+        district.setActive(false);
+        return toItem(district);
+    }
+
+    public GeographyItemResponse deleteTaluk(Long id) {
+        GeoTaluk taluk = findTaluk(id);
+        taluk.setActive(false);
+        return toItem(taluk);
+    }
+
+    public GeographyItemResponse deleteTown(Long id) {
+        GeoTown town = findTown(id);
+        town.setActive(false);
+        return toItem(town);
+    }
+
+    public PincodeDetailsResponse deletePincode(Long id) {
+        GeoPincode pincode = findPincode(id);
+        pincode.setActive(false);
+        return toPincodeDetails(pincode);
+    }
+
     public GeographyItemResponse createState(StateRequest request) {
         String name = required(request.name(), "State name is required.");
         if (stateRepository.existsByNameIgnoreCase(name)) {
@@ -458,3 +525,4 @@ public class GeographyService {
         }
     }
 }
+
