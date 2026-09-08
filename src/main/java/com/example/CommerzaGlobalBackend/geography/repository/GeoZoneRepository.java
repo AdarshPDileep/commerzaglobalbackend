@@ -9,5 +9,7 @@ public interface GeoZoneRepository extends JpaRepository<GeoZone, Long> {
     List<GeoZone> findByStateIdOrderByNameAsc(Long stateId);
     boolean existsByStateIdAndNameIgnoreCase(Long stateId, String name);
     long countByStateId(Long stateId);
+    boolean existsByStateId(Long stateId);
     List<GeoZone> findTop10ByNameContainingIgnoreCase(String name);
 }
+

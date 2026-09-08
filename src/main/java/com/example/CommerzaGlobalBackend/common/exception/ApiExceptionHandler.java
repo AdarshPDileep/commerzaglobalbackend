@@ -1,6 +1,8 @@
 package com.example.CommerzaGlobalBackend.common.exception;
 
 import com.example.CommerzaGlobalBackend.common.ApiResponse;
+import com.example.CommerzaGlobalBackend.geography.dto.GeographyInUseResponse;
+import com.example.CommerzaGlobalBackend.geography.exception.GeographyInUseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -9,6 +11,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
+    @ExceptionHandler(GeographyInUseException.class)
+    public ResponseEntity<GeographyInUseResponse> handleGeographyInUse(GeographyInUseException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new GeographyInUseResponse(false, ex.getCode(), ex.getMessage(), ex.getDependencies()));
+    }
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure(ex.getMessage()));
@@ -19,3 +26,5 @@ public class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(ApiResponse.failure(ex.getMessage()));
     }
 }
+
+

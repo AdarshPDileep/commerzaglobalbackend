@@ -9,5 +9,7 @@ public interface GeoDistrictRepository extends JpaRepository<GeoDistrict, Long> 
     List<GeoDistrict> findByZoneIdOrderByNameAsc(Long zoneId);
     boolean existsByZoneIdAndNameIgnoreCase(Long zoneId, String name);
     long countByZoneId(Long zoneId);
+    boolean existsByZoneId(Long zoneId);
     List<GeoDistrict> findTop10ByNameContainingIgnoreCase(String name);
 }
+

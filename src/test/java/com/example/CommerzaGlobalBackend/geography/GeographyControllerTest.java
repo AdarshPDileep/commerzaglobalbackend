@@ -106,8 +106,12 @@ class GeographyControllerTest {
 
 
     @Test
-    void adminCanViewUpdateAndSoftDeleteState() throws Exception {
-        GeoState state = saveHierarchy(true, true).state();
+    void adminCanViewUpdateAndDeleteUnusedState() throws Exception {
+        GeoState state = stateRepository.save(GeoState.builder()
+                .name("Kerala")
+                .code("KL")
+                .active(true)
+                .build());
 
         mockMvc.perform(get("/api/admin/geography/states/{id}", state.getId()))
                 .andExpect(status().isOk())
@@ -129,11 +133,48 @@ class GeographyControllerTest {
 
         mockMvc.perform(delete("/api/admin/geography/states/{id}", state.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.active").value(false));
+                .andExpect(jsonPath("$.success").value(true));
+
+        mockMvc.perform(get("/api/admin/geography/states/{id}", state.getId()))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void adminCanViewAndSoftDeletePincodeById() throws Exception {
+    void adminDeleteStateIsBlockedWhenChildZonesExist() throws Exception {
+        GeoState state = saveHierarchy(true, true).state();
+
+        mockMvc.perform(delete("/api/admin/geography/states/{id}", state.getId()))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.code").value("GEOGRAPHY_IN_USE"))
+                .andExpect(jsonPath("$.message").value("This state cannot be deleted because dependent records exist."))
+                .andExpect(jsonPath("$.dependencies.zones").value(1));
+
+        mockMvc.perform(get("/api/admin/geography/states/{id}", state.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.active").value(true));
+    }
+
+    @Test
+    void adminDeleteTownIsBlockedWhenPincodesExist() throws Exception {
+        GeoTown town = saveHierarchy(true, true).town();
+
+        mockMvc.perform(delete("/api/admin/geography/towns/{id}", town.getId()))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.code").value("GEOGRAPHY_IN_USE"))
+                .andExpect(jsonPath("$.message").value("This town cannot be deleted because dependent records exist."))
+                .andExpect(jsonPath("$.dependencies.pincodes").value(1))
+                .andExpect(jsonPath("$.dependencies.branches").value(0))
+                .andExpect(jsonPath("$.dependencies.hubs").value(0));
+
+        mockMvc.perform(get("/api/admin/geography/towns/{id}", town.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.active").value(true));
+    }
+
+    @Test
+    void adminCanViewAndDeletePincodeById() throws Exception {
         GeoPincode pincode = saveHierarchy(true, true).pincode();
 
         mockMvc.perform(get("/api/admin/geography/pincodes/id/{id}", pincode.getId()))
@@ -143,7 +184,10 @@ class GeographyControllerTest {
 
         mockMvc.perform(delete("/api/admin/geography/pincodes/{id}", pincode.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.active").value(false));
+                .andExpect(jsonPath("$.success").value(true));
+
+        mockMvc.perform(get("/api/admin/geography/pincodes/id/{id}", pincode.getId()))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -209,5 +253,6 @@ class GeographyControllerTest {
     private record SavedHierarchy(GeoState state, GeoTown town, GeoPincode pincode) {
     }
 }
+
 
 

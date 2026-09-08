@@ -14,5 +14,7 @@ public interface GeoPincodeRepository extends JpaRepository<GeoPincode, Long> {
     Page<GeoPincode> findByTownIdOrderByPincodeAsc(Long townId, Pageable pageable);
     List<GeoPincode> findTop10ByPincodeContaining(String pincode);
     long countByTownId(Long townId);
+    boolean existsByTownId(Long townId);
     long countByServiceableTrue();
 }
+

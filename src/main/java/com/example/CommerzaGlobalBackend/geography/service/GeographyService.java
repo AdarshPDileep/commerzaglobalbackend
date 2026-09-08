@@ -23,6 +23,7 @@ import com.example.CommerzaGlobalBackend.geography.entity.GeoState;
 import com.example.CommerzaGlobalBackend.geography.entity.GeoTaluk;
 import com.example.CommerzaGlobalBackend.geography.entity.GeoTown;
 import com.example.CommerzaGlobalBackend.geography.entity.GeoZone;
+import com.example.CommerzaGlobalBackend.geography.exception.GeographyInUseException;
 import com.example.CommerzaGlobalBackend.geography.repository.GeoDistrictRepository;
 import com.example.CommerzaGlobalBackend.geography.repository.GeoPincodeRepository;
 import com.example.CommerzaGlobalBackend.geography.repository.GeoStateRepository;
@@ -37,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -114,38 +116,79 @@ public class GeographyService {
 
     public GeographyItemResponse deleteState(Long id) {
         GeoState state = findState(id);
-        state.setActive(false);
-        return toItem(state);
+        Map<String, Long> dependencies = Map.of(
+                "zones", zoneRepository.countByStateId(state.getId()),
+                "branches", 0L,
+                "hubs", 0L
+        );
+        ensureNoDependencies("state", dependencies);
+        GeographyItemResponse response = toItem(state);
+        stateRepository.delete(state);
+        return response;
     }
 
     public GeographyItemResponse deleteZone(Long id) {
         GeoZone zone = findZone(id);
-        zone.setActive(false);
-        return toItem(zone);
+        Map<String, Long> dependencies = Map.of(
+                "districts", districtRepository.countByZoneId(zone.getId()),
+                "branches", 0L,
+                "hubs", 0L
+        );
+        ensureNoDependencies("zone", dependencies);
+        GeographyItemResponse response = toItem(zone);
+        zoneRepository.delete(zone);
+        return response;
     }
 
     public GeographyItemResponse deleteDistrict(Long id) {
         GeoDistrict district = findDistrict(id);
-        district.setActive(false);
-        return toItem(district);
+        Map<String, Long> dependencies = Map.of(
+                "taluks", talukRepository.countByDistrictId(district.getId()),
+                "branches", 0L,
+                "hubs", 0L
+        );
+        ensureNoDependencies("district", dependencies);
+        GeographyItemResponse response = toItem(district);
+        districtRepository.delete(district);
+        return response;
     }
 
     public GeographyItemResponse deleteTaluk(Long id) {
         GeoTaluk taluk = findTaluk(id);
-        taluk.setActive(false);
-        return toItem(taluk);
+        Map<String, Long> dependencies = Map.of(
+                "towns", townRepository.countByTalukId(taluk.getId()),
+                "branches", 0L,
+                "hubs", 0L
+        );
+        ensureNoDependencies("taluk", dependencies);
+        GeographyItemResponse response = toItem(taluk);
+        talukRepository.delete(taluk);
+        return response;
     }
 
     public GeographyItemResponse deleteTown(Long id) {
         GeoTown town = findTown(id);
-        town.setActive(false);
-        return toItem(town);
+        Map<String, Long> dependencies = Map.of(
+                "pincodes", pincodeRepository.countByTownId(town.getId()),
+                "branches", 0L,
+                "hubs", 0L
+        );
+        ensureNoDependencies("town", dependencies);
+        GeographyItemResponse response = toItem(town);
+        townRepository.delete(town);
+        return response;
     }
 
     public PincodeDetailsResponse deletePincode(Long id) {
         GeoPincode pincode = findPincode(id);
-        pincode.setActive(false);
-        return toPincodeDetails(pincode);
+        Map<String, Long> dependencies = Map.of(
+                "branches", 0L,
+                "hubs", 0L
+        );
+        ensureNoDependencies("pincode", dependencies);
+        PincodeDetailsResponse response = toPincodeDetails(pincode);
+        pincodeRepository.delete(pincode);
+        return response;
     }
 
     public GeographyItemResponse createState(StateRequest request) {
@@ -392,6 +435,12 @@ public class GeographyService {
         return results.stream().limit(25).toList();
     }
 
+    private void ensureNoDependencies(String type, Map<String, Long> dependencies) {
+        boolean inUse = dependencies.values().stream().anyMatch(count -> count > 0);
+        if (inUse) {
+            throw new GeographyInUseException("This " + type + " cannot be deleted because dependent records exist.", dependencies);
+        }
+    }
     private void applyPincodeFlags(GeoPincode pincode, PincodeRequest request) {
         if (request.serviceable() != null) pincode.setServiceable(request.serviceable());
         if (request.pickupAvailable() != null) pincode.setPickupAvailable(request.pickupAvailable());
@@ -525,4 +574,6 @@ public class GeographyService {
         }
     }
 }
+
+
 

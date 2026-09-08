@@ -9,5 +9,7 @@ public interface GeoTalukRepository extends JpaRepository<GeoTaluk, Long> {
     List<GeoTaluk> findByDistrictIdOrderByNameAsc(Long districtId);
     boolean existsByDistrictIdAndNameIgnoreCase(Long districtId, String name);
     long countByDistrictId(Long districtId);
+    boolean existsByDistrictId(Long districtId);
     List<GeoTaluk> findTop10ByNameContainingIgnoreCase(String name);
 }
+
