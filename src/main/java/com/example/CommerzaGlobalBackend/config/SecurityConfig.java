@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
                         .requestMatchers("/api/admin/login", "/api/admin/logout").permitAll()
-                        .requestMatchers("/api/admin/geography/**", "/api/admin/network/**", "/api/admin/franchises/**", "/api/geography/**").permitAll()
+                        .requestMatchers("/api/admin/geography/**", "/api/admin/network/**", "/api/admin/franchises/**", "/api/admin/rate-cards/**", "/api/admin/surcharges/**", "/api/geography/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
