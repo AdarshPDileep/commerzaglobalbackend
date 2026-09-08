@@ -9,7 +9,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.blankOrNullString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,6 +21,16 @@ class AdminAuthControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Test
+    void loginAllowsLocalFrontendCorsPreflight() throws Exception {
+        mockMvc.perform(options("/api/admin/login")
+                        .header("Origin", "http://127.0.0.1:5174")
+                        .header("Access-Control-Request-Method", "POST")
+                        .header("Access-Control-Request-Headers", "content-type"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "http://127.0.0.1:5174"));
+    }
 
     @Test
     void loginAcceptsConfiguredAdminCredentials() throws Exception {
@@ -38,6 +50,22 @@ class AdminAuthControllerTest {
     }
 
     @Test
+    void loginAcceptsConfiguredAdminCredentialsFromLocalFrontendOrigin() throws Exception {
+        mockMvc.perform(post("/api/admin/login")
+                        .header("Origin", "http://127.0.0.1:5174")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": "admin@commerzaglobal.local",
+                                  "password": "passowrd"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "http://127.0.0.1:5174"))
+                .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
     void loginRejectsInvalidAdminCredentials() throws Exception {
         mockMvc.perform(post("/api/admin/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -52,3 +80,4 @@ class AdminAuthControllerTest {
                 .andExpect(jsonPath("$.message").value("Invalid admin credentials"));
     }
 }
+

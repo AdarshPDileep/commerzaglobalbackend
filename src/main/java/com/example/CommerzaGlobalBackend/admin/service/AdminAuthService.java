@@ -13,7 +13,7 @@ import java.util.Base64;
 public class AdminAuthService {
 
     private static final String ADMIN_EMAIL = "admin@commerzaglobal.local";
-    private static final String ADMIN_PASSWORD = "passowrd";
+    private static final String ADMIN_PASSWORD = "password";
 
     public AdminLoginResponse login(AdminLoginRequest request) {
         if (!isValidCredential(request)) {
