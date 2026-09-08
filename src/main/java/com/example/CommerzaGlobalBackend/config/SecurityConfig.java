@@ -19,10 +19,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/admin/login"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/admin/login", "/api/admin/logout"))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.OPTIONS, "/api/admin/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/admin/login").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/api/admin/login", "/api/admin/logout").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/admin/login", "/api/admin/logout").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
@@ -38,11 +38,13 @@ public class SecurityConfig {
                 "http://127.0.0.1:5174"
         ));
         configuration.setAllowedMethods(List.of("POST", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Content-Type"));
+        configuration.setAllowedHeaders(List.of("Content-Type", "Authorization"));
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/admin/login", configuration);
+        source.registerCorsConfiguration("/api/admin/**", configuration);
         return source;
     }
 }
+
+

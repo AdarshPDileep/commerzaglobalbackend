@@ -39,7 +39,7 @@ class AdminAuthControllerTest {
                         .content("""
                                 {
                                   "email": "admin@commerzaglobal.local",
-                                  "password": "passowrd"
+                                  "password": "password"
                                 }
                                 """))
                 .andExpect(status().isOk())
@@ -57,7 +57,7 @@ class AdminAuthControllerTest {
                         .content("""
                                 {
                                   "email": "admin@commerzaglobal.local",
-                                  "password": "passowrd"
+                                  "password": "password"
                                 }
                                 """))
                 .andExpect(status().isOk())
@@ -89,5 +89,6 @@ class AdminAuthControllerTest {
                 .andExpect(jsonPath("$.message").value("Invalid admin credentials"));
     }
 }
+
 
 

@@ -2,6 +2,7 @@ package com.example.CommerzaGlobalBackend.admin.controller;
 
 import com.example.CommerzaGlobalBackend.admin.dto.AdminLoginRequest;
 import com.example.CommerzaGlobalBackend.admin.dto.AdminLoginResponse;
+import com.example.CommerzaGlobalBackend.admin.dto.AdminLogoutResponse;
 import com.example.CommerzaGlobalBackend.admin.service.AdminAuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,4 +30,11 @@ public class AdminAuthController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<AdminLogoutResponse> logout() {
+        return ResponseEntity.ok(AdminLogoutResponse.loggedOut());
+    }
 }
+
+
