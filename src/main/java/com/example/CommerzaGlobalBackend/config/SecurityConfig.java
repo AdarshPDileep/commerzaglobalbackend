@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
                         .requestMatchers("/api/admin/login", "/api/admin/logout").permitAll()
-                        .requestMatchers("/api/admin/geography/**", "/api/geography/**").permitAll()
+                        .requestMatchers("/api/admin/geography/**", "/api/admin/network/**", "/api/geography/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
@@ -47,4 +47,6 @@ public class SecurityConfig {
         return source;
     }
 }
+
+
 

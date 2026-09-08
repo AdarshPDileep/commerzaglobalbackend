@@ -3,6 +3,8 @@ package com.example.CommerzaGlobalBackend.common.exception;
 import com.example.CommerzaGlobalBackend.common.ApiResponse;
 import com.example.CommerzaGlobalBackend.geography.dto.GeographyInUseResponse;
 import com.example.CommerzaGlobalBackend.geography.exception.GeographyInUseException;
+import com.example.CommerzaGlobalBackend.network.dto.NetworkInUseResponse;
+import com.example.CommerzaGlobalBackend.network.exception.NetworkInUseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,6 +18,12 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new GeographyInUseResponse(false, ex.getCode(), ex.getMessage(), ex.getDependencies()));
     }
+    @ExceptionHandler(NetworkInUseException.class)
+    public ResponseEntity<NetworkInUseResponse> handleNetworkInUse(NetworkInUseException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new NetworkInUseResponse(false, ex.getCode(), ex.getMessage(), ex.getDependencies()));
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure(ex.getMessage()));
@@ -26,5 +34,7 @@ public class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(ApiResponse.failure(ex.getMessage()));
     }
 }
+
+
 
 
