@@ -66,6 +66,15 @@ class AdminAuthControllerTest {
     }
 
     @Test
+    void logoutClearsAdminSessionFromLocalFrontendOrigin() throws Exception {
+        mockMvc.perform(post("/api/admin/logout")
+                        .header("Origin", "http://127.0.0.1:5174"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "http://127.0.0.1:5174"))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("Admin logout successful"));
+    }
+    @Test
     void loginRejectsInvalidAdminCredentials() throws Exception {
         mockMvc.perform(post("/api/admin/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -80,4 +89,5 @@ class AdminAuthControllerTest {
                 .andExpect(jsonPath("$.message").value("Invalid admin credentials"));
     }
 }
+
 
