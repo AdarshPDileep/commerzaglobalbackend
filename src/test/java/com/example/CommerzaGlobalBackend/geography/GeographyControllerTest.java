@@ -12,6 +12,9 @@ import com.example.CommerzaGlobalBackend.geography.repository.GeoStateRepository
 import com.example.CommerzaGlobalBackend.geography.repository.GeoTalukRepository;
 import com.example.CommerzaGlobalBackend.geography.repository.GeoTownRepository;
 import com.example.CommerzaGlobalBackend.geography.repository.GeoZoneRepository;
+import com.example.CommerzaGlobalBackend.network.repository.NetworkNodePincodeRepository;
+import com.example.CommerzaGlobalBackend.network.repository.NetworkNodeRepository;
+import com.example.CommerzaGlobalBackend.network.repository.NetworkRouteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +55,20 @@ class GeographyControllerTest {
     @Autowired
     private GeoPincodeRepository pincodeRepository;
 
+    @Autowired
+    private NetworkRouteRepository routeRepository;
+
+    @Autowired
+    private NetworkNodePincodeRepository nodePincodeRepository;
+
+    @Autowired
+    private NetworkNodeRepository nodeRepository;
+
     @BeforeEach
     void cleanDatabase() {
+        routeRepository.deleteAll();
+        nodePincodeRepository.deleteAll();
+        nodeRepository.deleteAll();
         pincodeRepository.deleteAll();
         townRepository.deleteAll();
         talukRepository.deleteAll();
@@ -253,6 +268,7 @@ class GeographyControllerTest {
     private record SavedHierarchy(GeoState state, GeoTown town, GeoPincode pincode) {
     }
 }
+
 
 
 
