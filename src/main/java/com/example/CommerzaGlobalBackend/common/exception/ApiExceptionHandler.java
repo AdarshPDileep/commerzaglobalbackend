@@ -1,6 +1,8 @@
 package com.example.CommerzaGlobalBackend.common.exception;
 
 import com.example.CommerzaGlobalBackend.common.ApiResponse;
+import com.example.CommerzaGlobalBackend.franchise.dto.FranchiseInUseResponse;
+import com.example.CommerzaGlobalBackend.franchise.exception.FranchiseInUseException;
 import com.example.CommerzaGlobalBackend.geography.dto.GeographyInUseResponse;
 import com.example.CommerzaGlobalBackend.geography.exception.GeographyInUseException;
 import com.example.CommerzaGlobalBackend.network.dto.NetworkInUseResponse;
@@ -24,6 +26,12 @@ public class ApiExceptionHandler {
                 .body(new NetworkInUseResponse(false, ex.getCode(), ex.getMessage(), ex.getDependencies()));
     }
 
+    @ExceptionHandler(FranchiseInUseException.class)
+    public ResponseEntity<FranchiseInUseResponse> handleFranchiseInUse(FranchiseInUseException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new FranchiseInUseResponse(false, ex.getCode(), ex.getMessage(), ex.getDependencies()));
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure(ex.getMessage()));
@@ -34,6 +42,7 @@ public class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(ApiResponse.failure(ex.getMessage()));
     }
 }
+
 
 
 
