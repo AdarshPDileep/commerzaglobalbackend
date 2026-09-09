@@ -6,6 +6,8 @@ import com.example.CommerzaGlobalBackend.franchise.exception.FranchiseInUseExcep
 import com.example.CommerzaGlobalBackend.geography.dto.GeographyInUseResponse;
 import com.example.CommerzaGlobalBackend.geography.exception.GeographyInUseException;
 import com.example.CommerzaGlobalBackend.network.dto.NetworkInUseResponse;
+import com.example.CommerzaGlobalBackend.seller.dto.PickupUnavailableResponse;
+import com.example.CommerzaGlobalBackend.seller.exception.PickupNotAvailableException;
 import com.example.CommerzaGlobalBackend.network.exception.NetworkInUseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,12 @@ public class ApiExceptionHandler {
                 .body(new FranchiseInUseResponse(false, ex.getCode(), ex.getMessage(), ex.getDependencies()));
     }
 
+    @ExceptionHandler(PickupNotAvailableException.class)
+    public ResponseEntity<PickupUnavailableResponse> handlePickupNotAvailable(PickupNotAvailableException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new PickupUnavailableResponse(false, ex.getCode(), ex.getMessage()));
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure(ex.getMessage()));
@@ -42,6 +50,7 @@ public class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(ApiResponse.failure(ex.getMessage()));
     }
 }
+
 
 
 

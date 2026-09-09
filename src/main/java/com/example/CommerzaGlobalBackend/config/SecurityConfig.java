@@ -22,7 +22,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
-                        .requestMatchers("/api/admin/login", "/api/admin/logout").permitAll()
+                        .requestMatchers("/api/admin/login", "/api/admin/logout", "/api/seller/register/**").permitAll()
                         .requestMatchers("/api/admin/geography/**", "/api/admin/network/**", "/api/admin/franchises/**", "/api/admin/rate-cards/**", "/api/admin/surcharges/**", "/api/admin/commissions/**", "/api/geography/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -47,6 +47,7 @@ public class SecurityConfig {
         return source;
     }
 }
+
 
 
 
